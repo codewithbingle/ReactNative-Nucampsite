@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Alert,
   PanResponder,
+  Share,
 } from "react-native";
 import { Card, Icon, Input, Rating } from "react-native-elements";
 import { connect } from "react-redux";
@@ -36,6 +37,7 @@ function RenderCampsite(props) {
   const view = React.createRef();
 
   const recognizeDrag = ({ dx }) => (dx < -200 ? true : false);
+  const recognizeComment = ({ dx }) => (dx > 200 ? true : false);
 
   const panResponder = PanResponder.create({
     onStartShouldSetPanResponder: () => true,
@@ -68,10 +70,27 @@ function RenderCampsite(props) {
           ],
           { cancelable: false }
         );
+        // task 3
+      } else if (recognizeComment(gestureState)) {
+        console.log("we are on the right track");
+        props.onShowModal();
       }
       return true;
     },
   });
+//task 3
+  const shareCampsite = (title, message, url) => {
+    Share.share(
+      {
+        title,
+        message: `${title}: ${message} ${url}`,
+        url,
+      },
+      {
+        dialogTitle: "Share " + title,
+      }
+    );
+  };
 
   if (campsite) {
     return (
@@ -154,7 +173,6 @@ class CampsiteInfo extends Component {
       rating: 5,
       author: "",
       text: "",
-      showModal: false,
     };
   }
 
