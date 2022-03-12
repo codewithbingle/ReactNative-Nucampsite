@@ -7,6 +7,8 @@ import {
   Modal,
   Button,
   StyleSheet,
+  Alert,
+  PanResponder,
 } from "react-native";
 import { Card, Icon, Input, Rating } from "react-native-elements";
 import { connect } from "react-redux";
@@ -30,6 +32,39 @@ const mapDispatchToProps = {
 
 function RenderCampsite(props) {
   const { campsite } = props;
+
+  const recognizeDrag = ({ dx }) => (dx < -200 ? true : false);
+
+  const panResponder = PanResponder.create({
+    onStartShouldSetPanResponder: () => true,
+    onPanResponderEnd: (e, gestureState) => {
+      console.log("pan responder end", gestureState);
+      if (recognizeDrag(gestureState)) {
+        Alert.alert(
+          "Add Favorite",
+          "Are you sure you wish to add " +
+            campsite.name +
+            " to favorites?",
+          [
+            {
+              text: "Cancel",
+              style: "cancel",
+              onPress: () => console.log("Cancel Pressed"),
+            },
+            {
+              text: "OK",
+              onPress: () =>
+                props.favorite
+                  ? console.log("Already set as a favorite")
+                  : props.markFavorite(),
+            },
+          ],
+          { cancelable: false }
+        );
+      }
+      return true;
+    },
+  });
 
   if (campsite) {
     return (
