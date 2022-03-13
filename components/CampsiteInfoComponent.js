@@ -78,7 +78,7 @@ function RenderCampsite(props) {
       return true;
     },
   });
-//task 3
+
   const shareCampsite = (title, message, url) => {
     Share.share(
       {
@@ -126,6 +126,20 @@ function RenderCampsite(props) {
               raised
               reverse
               onPress={() => props.onShowModal()}
+            />
+            <Icon
+              name={"share"}
+              type="font-awesome"
+              color="#5637DD"
+              raised
+              reverse
+              onPress={() =>
+                shareCampsite(
+                  campsite.name,
+                  campsite.description,
+                  baseUrl + campsite.image
+                )
+              }
             />
           </View>
         </Card>
