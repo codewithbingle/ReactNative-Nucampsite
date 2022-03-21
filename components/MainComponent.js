@@ -2,11 +2,12 @@ import React, { Component } from "react";
 import Home from "./HomeComponent";
 import Directory from "./DirectoryComponent";
 import CampsiteInfo from "./CampsiteInfoComponent";
-import About from './AboutComponent';
+import About from "./AboutComponent";
 import Contact from "./ContactComponent";
 import Reservation from "./ReservationComponent";
 import Favorites from "./FavoritesComponent";
 import Login from "./LoginComponent";
+import Constants from "expo-constants";
 import {
   View,
   Platform,
@@ -17,7 +18,6 @@ import {
   Alert,
   ToastAndroid,
 } from "react-native";
-import Constants from 'expo-constants';
 import { createStackNavigator } from "react-navigation-stack";
 import { createDrawerNavigator, DrawerItems } from "react-navigation-drawer";
 import { createAppContainer } from "react-navigation";
@@ -32,7 +32,6 @@ import {
 } from "../redux/ActionCreators";
 import NetInfo from "@react-native-community/netinfo";
 
-
 const mapDispatchToProps = {
   fetchCampsites,
   fetchComments,
@@ -44,14 +43,16 @@ const DirectoryNavigator = createStackNavigator(
   {
     Directory: {
       screen: Directory,
-      navigationOptions: ({navigation}) => ({
-        headerLeft: <Icon
-          name='list'
-          type='font-awesome'
-          iconStyle={styles.stackIcon}
-          onPress={() => navigation.toggleDrawer()}
-        />
-      })
+      navigationOptions: ({ navigation }) => ({
+        headerLeft: (
+          <Icon
+            name="list"
+            type="font-awesome"
+            iconStyle={styles.stackIcon}
+            onPress={() => navigation.toggleDrawer()}
+          />
+        ),
+      }),
     },
     CampsiteInfo: { screen: CampsiteInfo },
   },
@@ -219,7 +220,6 @@ const LoginNavigator = createStackNavigator(
   }
 );
 
-
 const CustomDrawerContentComponent = (props) => (
   <ScrollView>
     <SafeAreaView
@@ -234,7 +234,7 @@ const CustomDrawerContentComponent = (props) => (
           />
         </View>
         <View style={{ flex: 2 }}>
-          <Text style={styles.drawerHeaderText}>NuCamp</Text>
+          <Text style={styles.drawerHeaderText}>Nucamp</Text>
         </View>
       </View>
       <DrawerItems {...props} />
@@ -328,6 +328,7 @@ const MainNavigator = createDrawerNavigator(
 );
 
 const AppNavigator = createAppContainer(MainNavigator);
+
 class Main extends Component {
   componentDidMount() {
     this.props.fetchCampsites();
@@ -335,14 +336,7 @@ class Main extends Component {
     this.props.fetchPromotions();
     this.props.fetchPartners();
 
-    NetInfo.fetch().then((connectionInfo) => {
-      Platform.OS === "ios"
-        ? Alert.alert("Initial Network Connectivity Type:", connectionInfo.type)
-        : ToastAndroid.show(
-            "Initial Network Connectivity Type: " + connectionInfo.type,
-            ToastAndroid.LONG
-          );
-    });
+    this.showNetInfo();
 
     this.unsubscribeNetInfo = NetInfo.addEventListener((connectionInfo) => {
       this.handleConnectivityChange(connectionInfo);
@@ -352,6 +346,17 @@ class Main extends Component {
   componentWillUnmount() {
     this.unsubscribeNetInfo();
   }
+
+  showNetInfo = async () => {
+    await NetInfo.fetch().then((connectionInfo) => {
+      Platform.OS === "ios"
+        ? Alert.alert("Initial Network Connectivity Type:", connectionInfo.type)
+        : ToastAndroid.show(
+            "Initial Network Connectivity Type: " + connectionInfo.type,
+            ToastAndroid.LONG
+          );
+    });
+  };
 
   handleConnectivityChange = (connectionInfo) => {
     let connectionMsg = "You are now connected to an active network.";
@@ -401,7 +406,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   drawerHeaderText: {
-    color: "#fff",
+    color: "#FFF",
     fontSize: 24,
     fontWeight: "bold",
   },
